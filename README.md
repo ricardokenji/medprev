@@ -65,7 +65,7 @@ GET http://localhost:3000/person/{id}
 ### Listar 
 GET http://localhost:3000/person
 
-## TODO
+## Features e TODO
 * SimpleRoute - ok : Roteador simples utilizando padrão de projeto Strategy para tratar resposta de acordo com o tipo json ou texto
 * Container - ok : Container de injeção de dependencias simples, com opção de bindar Singleton ou Factory
 * Auth - todo : Authenticação para acessar os endpoints  
