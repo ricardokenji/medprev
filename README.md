@@ -58,7 +58,7 @@ PUT http://localhost:3000/person/{id}
 		]
 }
 ````
-### Deleter
+### Deletar
 DELETE http://localhost:3000/person/{id}
 ### Visualizar
 GET http://localhost:3000/person/{id}
@@ -67,7 +67,7 @@ GET http://localhost:3000/person
 
 ## TODO
 * SimpleRoute - ok : Roteador simples utilizando padrão de projeto Strategy para tratar resposta de acordo com o tipo json ou texto
-* Container - ok : Container de injeção de dependencias simples
+* Container - ok : Container de injeção de dependencias simples, com opção de bindar Singleton ou Factory
 * Auth - todo : Authenticação para acessar os endpoints  
 * Middleware - todo : Middleware simples utilizando padrão de projeto chain of resnponsibility para executar tarefas antes da execução do request
 * Testes unitários - todo : testes unitários utilizando jest
