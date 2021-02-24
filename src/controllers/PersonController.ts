@@ -1,4 +1,3 @@
-import { IncomingMessage, ServerResponse } from 'http'
 import { Person } from '../models/Person'
 import PersonService from '../services/PersonService'
 
