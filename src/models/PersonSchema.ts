@@ -1,4 +1,5 @@
 import mongoose, { Connection } from 'mongoose'
+import { Person } from './Person';
 
 const PersonSchema = new mongoose.Schema({
     personId: {
@@ -74,4 +75,4 @@ const PersonSchema = new mongoose.Schema({
     ],
 });
 
-export default mongoose.model('Person', PersonSchema);
+export default mongoose.model<Person>('Person', PersonSchema);

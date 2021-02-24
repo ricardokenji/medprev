@@ -7,6 +7,7 @@ import InvalidPersonTypeException from "../exceptions/InvalidPersonTypeException
 import { v4 as uuid } from 'uuid'
 import PersonValidator from "../validators/PersonValidator"
 import ValidationErrorException from "../exceptions/ValidationErrorException"
+import NotFoundException from "../exceptions/NotFoundException"
 
 export default class PersonService {
     private repository: PersonRepository
@@ -17,7 +18,7 @@ export default class PersonService {
         this.validator = new PersonValidator()
     }
 
-    createPerson(input: PersonRequest): Person {
+    async createPerson(input: PersonRequest): Promise<Person> {
         Logger.info('Creating person:' + JSON.stringify(input))
 
         const errors = this.validator.validateRequest(input)
@@ -41,11 +42,11 @@ export default class PersonService {
                             .enderecos(this.buildAddressesFrom(input))
                             .build()
 
-        this.repository.save(person)
+        await this.repository.save(person)
         return person
     }
 
-    updatePerson(personId: string, input: PersonRequest) {
+    async updatePerson(personId: string, input: PersonRequest): Promise<Person> {
         Logger.info('Updating person' + personId)
 
         const errors = this.validator.validateRequest(input)
@@ -68,13 +69,22 @@ export default class PersonService {
                             .enderecos(this.buildAddressesFrom(input))
                             .build()
 
-        this.repository.update(personId, person)
+        await this.repository.update(personId, person)
+        return person
     }
 
-    deletePerson(personId: string) {
+    async deletePerson(personId: string) {
         Logger.info('Deleting person' + personId)
 
-        this.repository.delete(personId)
+        await this.repository.delete(personId)
+    }
+
+    async findPerson(personId: string): Promise<Person> {
+        const person = await this.repository.findOne(personId)
+        if (person == null) {
+            throw new NotFoundException()
+        }
+        return person
     }
 
     private buildAddressesFrom(input: PersonRequest): Array<Address> {

@@ -8,7 +8,7 @@ export default class SimpleRouter {
 	private routes: Array<RouteGroup>
 
 	constructor() {
-		this.routes = [new RouteGroup(Method.GET), new RouteGroup(Method.POST)]
+		this.routes = [new RouteGroup(Method.GET), new RouteGroup(Method.POST), new RouteGroup(Method.PUT), new RouteGroup(Method.DELETE)]
 	}
 
 	get(path: string, action: Function) {
@@ -28,6 +28,7 @@ export default class SimpleRouter {
 	}
 
 	findMatch(method: Method, request: IncomingMessage, response: ServerResponse) {
+		console.log(method, request.url, this.routes)
 		const route = this.routes.find(r => r.getMethod() == method)?.findRoute(request.url!)
 		if (route == undefined) {
 			throw new NotFoundException()
@@ -41,11 +42,11 @@ export default class SimpleRouter {
 		request.on('data', chunk => {
 			data += chunk;
 		})
-		request.on('end', () => {
+		request.on('end', async () => {
 			try {
 				const requestBody = data != '' ? JSON.parse(data) : {}
 				const parameters = route.getParameters(request.url!)
-				const body = action(parameters, requestBody)
+				const body = await action(parameters, requestBody)
 
 				const responseHandler = new ResponseHandler(response, body)
 				responseHandler.handle()
@@ -69,11 +70,11 @@ export default class SimpleRouter {
 }
 
 export const enum Method {
-	GET,
-	POST,
-	PUT,
-	DELETE,
-	UNDEFINED
+	GET = "GET",
+	POST = "POST",
+	PUT = "PUT",
+	DELETE  = "DELETE",
+	UNDEFINED = "UNDEFINED"
 }
 
 export class RouteGroup {

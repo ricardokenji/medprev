@@ -9,28 +9,20 @@ export default class PersonController {
         this.personService = personService
     }
 
-    index(urlParams: UrlParams, data: {}): any {
-        return {
-            a: "z"
-        }
+    async getPerson(urlParams: UrlParams, data: {}): Promise<Person> {
+        return await this.personService.findPerson(urlParams.id)
     }
 
-    getPerson(urlParams: UrlParams, data: {}): any {
-        return {
-            a: "x"
-        }
+    async createPerson(urlParams: UrlParams, data: PersonRequest): Promise<Person> {
+        return await this.personService.createPerson(data)
     }
 
-    createPerson(urlParams: UrlParams, data: PersonRequest): Person {
-        return this.personService.createPerson(data)
-    }
-
-    updatePerson(urlParams: UrlParams, data: PersonRequest) {
+    async updatePerson(urlParams: UrlParams, data: PersonRequest): Promise<Person> {
         return this.personService.updatePerson(urlParams.id, data)
     }
 
-    deletePerson(urlParams: UrlParams, data: PersonRequest) {
-        //return this.personService.deletePerson(urlParams.id, data)
+    async deletePerson(urlParams: UrlParams, data: PersonRequest) {
+        await this.personService.deletePerson(urlParams.id)
     }
 
 }
