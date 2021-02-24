@@ -11,6 +11,6 @@ nodeJS, Typescript e mongo
 * SimpleRoute - ok : Roteador simples utilizando padrão de projeto Strategy para tratar resposta de acordo com o tipo json ou texto
 * Container - ok : Container de injeção de dependencias simples
 * Auth - todo : Authenticação para acessar os endpoints  
-* Middleware - todo : Middleware simples utilizando padrão de projeto method chaining para executar tarefas antes da execução do request
+* Middleware - todo : Middleware simples utilizando padrão de projeto chain of resnponsibility para executar tarefas antes da execução do request
 * Testes unitários - todo : testes unitários utilizando jest
 * Validador - incompleto : valida documentos(ok) , email(todo) e data(todo)
