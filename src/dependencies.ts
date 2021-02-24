@@ -5,7 +5,7 @@ import PersonService from './services/PersonService'
 import PersonController from './controllers/PersonController'
 
 //Set mongoose
-mongoose.connect('mongodb://root:root@localhost:27017', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb://root:root@localhost:27017', { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true })
 
 //Here we set dependencies on depency injection container
 const container = new Container()

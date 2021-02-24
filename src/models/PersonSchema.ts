@@ -1,6 +1,11 @@
 import mongoose, { Connection } from 'mongoose'
 
 const PersonSchema = new mongoose.Schema({
+    personId: {
+        type: 'String',
+        required: true,
+        index: true  
+    },
     tipo: {
         type: 'String',
         enum: ['PF', 'PJ'],

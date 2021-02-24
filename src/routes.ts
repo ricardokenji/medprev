@@ -7,10 +7,10 @@ const simpleRouter = new SimpleRouter()
 
 const personController = container.getBind<PersonController>(PersonController.name)
 
-simpleRouter.get("person/{:id}", personController.getPerson)
-simpleRouter.post("person", personController.createPerson)
-simpleRouter.put("person/{:id}", personController.updatePerson)
-simpleRouter.delete("person/{:id}", personController.deletePerson)
-simpleRouter.get("person", personController.index)
+simpleRouter.get("person/{:id}", personController.getPerson.bind(personController))
+simpleRouter.post("person", personController.createPerson.bind(personController))
+simpleRouter.put("person/{:id}", personController.updatePerson.bind(personController))
+simpleRouter.delete("person/{:id}", personController.deletePerson.bind(personController))
+simpleRouter.get("person", personController.index.bind(personController))
 
 export default simpleRouter

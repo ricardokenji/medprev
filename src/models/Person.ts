@@ -1,4 +1,6 @@
+
 export interface Person {
+    personId: String
     tipo: PersonType
     nome: string
     razaoSocial: string
@@ -24,6 +26,6 @@ export interface Address {
 }
 
 export enum PersonType {
-    PF,
-    PJ
+    PF = "PF",
+    PJ = "PJ"
 }

@@ -1,7 +1,8 @@
 import NotFoundException from "../exceptions/NotFoundException"
-import InvalidRouteException from "../exceptions/InvalidRouteException"
-import { throwExpression } from "../helpers"
 import { IncomingMessage, ServerResponse } from 'http'
+import { Logger, ResponseHandler } from './framework'
+import ValidationErrorException from "../exceptions/ValidationErrorException"
+
 
 export default class SimpleRouter {
 	private routes: Array<RouteGroup>
@@ -26,20 +27,44 @@ export default class SimpleRouter {
 		this.routes.find(r => r.getMethod() == Method.DELETE)?.addRoute(path, action)
 	}
 
-	findMatch(method: Method, request: IncomingMessage, response: ServerResponse): Function {
-		const group = this.routes.find(r => r.getMethod() == method)
-		if (group == undefined) {
-			throwExpression(new NotFoundException("invalid group for " + request.url))
-		}
-		const route = group.findRoute(request.url!)
+	findMatch(method: Method, request: IncomingMessage, response: ServerResponse) {
+		const route = this.routes.find(r => r.getMethod() == method)?.findRoute(request.url!)
 		if (route == undefined) {
-			throwExpression(new NotFoundException("invalid route for " + request.url))
+			throw new NotFoundException()
 		}
+		this.executeAction(request, response, route)
+	}
+
+	private executeAction(request: IncomingMessage, response: ServerResponse, route: Route) {
 		const action = route.getAction()
-		if (action == undefined) {
-			throwExpression(new NotFoundException("invalid action for " + request.url))
-		}
-		return action
+		let data = ''
+		request.on('data', chunk => {
+			data += chunk;
+		})
+		request.on('end', () => {
+			try {
+				const requestBody = data != '' ? JSON.parse(data) : {}
+				const parameters = route.getParameters(request.url!)
+				const body = action(parameters, requestBody)
+
+				const responseHandler = new ResponseHandler(response, body)
+				responseHandler.handle()
+			} catch(error) {
+				if (error.message == "NotFoundException") {
+					const exception: NotFoundException = error;
+					response.writeHead(404, {'Content-type':'text/plain'})
+					response.end()
+				} else if (error.message == "ValidationErrorException") {
+					const exception: ValidationErrorException = error;
+					response.writeHead(422, {'Content-type':'text/plain'})
+					response.end(JSON.stringify({ errors : exception.errors }))
+				} else {
+					response.writeHead(500, {'Content-type':'text/plain'})
+					response.end()
+					Logger.error(error)
+				}
+			}
+		})
 	}
 }
 
@@ -47,7 +72,8 @@ export const enum Method {
 	GET,
 	POST,
 	PUT,
-	DELETE
+	DELETE,
+	UNDEFINED
 }
 
 export class RouteGroup {
@@ -75,11 +101,13 @@ export class Route {
 	private path: string
 	private action: Function
 	private pattern: RegExp
+	private parameters: Array<string>
 
 	constructor(path: string, action : Function) {
 		this.path = path
 		this.action = action
 		this.pattern = this.getPattern(path)
+		this.parameters = this.getParametersList(path)
 	}
 
 	match(against: string): boolean {
@@ -90,9 +118,29 @@ export class Route {
 		return this.action
 	}
 
+	getParameters(url: string): {} {
+		const parameters: {[index: string]:any} = {}
+		const matches = this.pattern.exec(url)
+		if (matches == null) {
+			return parameters
+		}
+		for (let i = 0; i< matches.length; i++) {
+			if (i == 0) continue
+			parameters[this.parameters[i-1]] = matches[i]
+		}
+		return parameters
+	}
+
 	private getPattern(path: string): RegExp {
-		const pattern = path.replace(/{:[a-zA-Z]*}/g, "([^\/])+")
+		const pattern = path.replace(/{:[a-zA-Z]*}/g, "([a-z0-9-]+)*")
 		return new RegExp(pattern)
+	} 
+
+	private getParametersList(path: string): Array<string> {
+		const list: Array<string> = []
+		const parameters = this.path.match(/{:([a-zA-Z]*)}/g)
+		parameters?.forEach(param => list.push(param.replace(/[{}:]/g, "")))
+		return list
 	} 
 }
 
@@ -116,7 +164,7 @@ export function stringToMethod(method: string): Method {
 			break
 		}
 		default: {
-			throwExpression(new InvalidRouteException)
+			converted = Method.UNDEFINED
 		}
 	} 
 	return converted

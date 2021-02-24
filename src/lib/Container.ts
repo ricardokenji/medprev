@@ -1,5 +1,4 @@
 import InvalidBindException from "../exceptions/InvalidBindException"
-import { throwExpression } from "../helpers"
 
 export default class Container {
     private binds: Array<{ alias: string, callback: () => any }> = []
@@ -28,7 +27,7 @@ export default class Container {
 
     private checkDuplicate(alias: string): void {
         if (this.binds.find(b => b.alias == alias) != undefined) {
-            throwExpression(new InvalidBindException("Bind for this alias already exists: " + alias))
+            throw new InvalidBindException()
         }
     }
 }
