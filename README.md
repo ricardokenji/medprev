@@ -4,8 +4,8 @@
 nodeJS, Typescript e mongo
 
 ## como executar
-docker compose up
-npm run dev
+* docker compose up
+* npm run dev
 
 ## TODO
 * SimpleRoute - ok : Roteador simples utilizando padrão de projeto Strategy para tratar resposta de acordo com o tipo json ou texto
