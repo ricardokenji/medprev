@@ -26,21 +26,7 @@ export default class PersonService {
             throw new ValidationErrorException(errors)
         }
 
-        const person = Builder<Person>()
-                            .personId(uuid())
-                            .tipo(this.getPersonTypeFrom(input.tipo))
-                            .nome(input.nome)
-                            .razaoSocial(input.razaoSocial)
-                            .cpf(sanitizer.documentNumber(input.cpf))
-                            .cnpj(sanitizer.documentNumber(input.cnpj))
-                            .sexo(input.sexo)
-                            .dataNascimento(input.dataNascimento)
-                            .email(input.email)
-                            .telefone(input.telefone)
-                            .celular(input.celular)
-                            .foto(input.foto)
-                            .enderecos(this.buildAddressesFrom(input))
-                            .build()
+        const person = this.buildPerson(input)
 
         await this.repository.save(person)
         return person
@@ -54,20 +40,7 @@ export default class PersonService {
             throw new ValidationErrorException(errors)
         }
 
-        const person = Builder<Person>()
-                            .tipo(this.getPersonTypeFrom(input.tipo))
-                            .nome(input.nome)
-                            .razaoSocial(input.razaoSocial)
-                            .cpf(sanitizer.documentNumber(input.cpf))
-                            .cnpj(sanitizer.documentNumber(input.cnpj))
-                            .sexo(input.sexo)
-                            .dataNascimento(input.dataNascimento)
-                            .email(input.email)
-                            .telefone(input.telefone)
-                            .celular(input.celular)
-                            .foto(input.foto)
-                            .enderecos(this.buildAddressesFrom(input))
-                            .build()
+        const person = this.buildPerson(input)
 
         await this.repository.update(personId, person)
         return person
@@ -108,6 +81,34 @@ export default class PersonService {
             )
         )
         return addresses
+    }
+
+    private buildPerson(input: PersonRequest): Person {
+        const tipo = this.getPersonTypeFrom(input.tipo)
+
+        const builder = Builder<Person>()
+
+        builder.personId(uuid())
+            .tipo(tipo)
+            .nome(input.nome)
+            .email(input.email)
+            .telefone(input.telefone)
+            .celular(input.celular)
+            .foto(input.foto)
+            .enderecos(this.buildAddressesFrom(input))
+
+        if(tipo == PersonType.PJ) {
+            builder.razaoSocial(input.razaoSocial)
+                .cnpj(sanitizer.documentNumber(input.cnpj))
+        }    
+
+        if(tipo == PersonType.PF) {
+            builder.cpf(sanitizer.documentNumber(input.cpf))
+                .sexo(input.sexo)
+                .dataNascimento(input.dataNascimento)
+        }    
+
+        return builder.build()
     }
 
     private getPersonTypeFrom(personType: string): PersonType {
