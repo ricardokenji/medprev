@@ -23,7 +23,7 @@ export default class Container {
     }
 
     getBind<T>(alias: string): T {
-        return this.binds.find(b => b.alias == alias)?.callback() ?? throwExpression(new InvalidBindException("Invalid bind for" + alias))
+        return this.binds.find(b => b.alias == alias)?.callback() ?? null
     }
 
     private checkDuplicate(alias: string): void {

@@ -27,7 +27,7 @@ log4js.configure({
     }
 })
 
-const logger = log4js.getLogger()
-logger.level = 'debug'
+const Logger = log4js.getLogger()
+Logger.level = 'debug'
 
-export default logger
+export default Logger

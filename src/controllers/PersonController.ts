@@ -1,21 +1,28 @@
 import { IncomingMessage, ServerResponse } from 'http'
+import PersonService from '../services/PersonService'
 
 export default class PersonController {
+    private personService: PersonService
 
-    index(request: IncomingMessage, response: ServerResponse): any {
+    constructor(personService: PersonService) {
+        this.personService = personService
+    }
+
+    index(data: {}): any {
         return {
             a: "z"
         }
     }
 
-    getPerson(request: IncomingMessage, response: ServerResponse): any {
+    getPerson(data: {}): any {
         return {
             a: "x"
         }
     }
 
-    createPerson() {
-
+    createPerson(data: {}) {
+        let body = data
+        // this.personService.createPerson(data)
     }
 
     updatePerson() {
@@ -25,4 +32,5 @@ export default class PersonController {
     deletePerson() {
 
     }
+
 }
