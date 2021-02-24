@@ -11,5 +11,6 @@ simpleRouter.get("person/{:id}", personController.getPerson.bind(personControlle
 simpleRouter.post("person", personController.createPerson.bind(personController))
 simpleRouter.put("person/{:id}", personController.updatePerson.bind(personController))
 simpleRouter.delete("person/{:id}", personController.deletePerson.bind(personController))
+simpleRouter.get("person", personController.index.bind(personController))
 
 export default simpleRouter

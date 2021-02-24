@@ -87,6 +87,11 @@ export default class PersonService {
         return person
     }
 
+    async findAll(): Promise<Person[]> {
+        const person = await this.repository.findAll()
+        return person
+    }
+
     private buildAddressesFrom(input: PersonRequest): Array<Address> {
         const addresses: Array<Address> = []
         input.enderecos.forEach( address =>

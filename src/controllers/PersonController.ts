@@ -9,6 +9,10 @@ export default class PersonController {
         this.personService = personService
     }
 
+    async index(): Promise<Person[]> {
+        return await this.personService.findAll()
+    }
+
     async getPerson(urlParams: UrlParams, data: {}): Promise<Person> {
         return await this.personService.findPerson(urlParams.id)
     }
@@ -24,7 +28,6 @@ export default class PersonController {
     async deletePerson(urlParams: UrlParams, data: PersonRequest) {
         await this.personService.deletePerson(urlParams.id)
     }
-
 }
 
 export interface UrlParams {

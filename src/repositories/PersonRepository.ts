@@ -20,5 +20,9 @@ export default class PersonRepository {
     async findOne(id: string): Promise<Person | null> {
         return await PersonSchema.findOne({ 'personId': id })
     }
+
+    async findAll(): Promise<Person[]> {
+        return await PersonSchema.find({})
+    }
 }
 
