@@ -20,8 +20,8 @@ export default class PersonController {
         }
     }
 
-    createPerson(data: {}) {
-        let body = data
+    createPerson(data: any) {
+        return data
         // this.personService.createPerson(data)
     }
 

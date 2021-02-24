@@ -27,7 +27,19 @@ export default class SimpleRouter {
 	}
 
 	findMatch(method: Method, request: IncomingMessage, response: ServerResponse): Function {
-		return this.routes.find(r => r.getMethod() == method)?.findRoute(request.url!)?.getAction() ?? throwExpression(new NotFoundException("invalid url for " + request.url))
+		const group = this.routes.find(r => r.getMethod() == method)
+		if (group == undefined) {
+			throwExpression(new NotFoundException("invalid group for " + request.url))
+		}
+		const route = group.findRoute(request.url!)
+		if (route == undefined) {
+			throwExpression(new NotFoundException("invalid route for " + request.url))
+		}
+		const action = route.getAction()
+		if (action == undefined) {
+			throwExpression(new NotFoundException("invalid action for " + request.url))
+		}
+		return action
 	}
 }
 
@@ -67,7 +79,7 @@ export class Route {
 	constructor(path: string, action : Function) {
 		this.path = path
 		this.action = action
-		this.pattern =  this.getPattern(path)
+		this.pattern = this.getPattern(path)
 	}
 
 	match(against: string): boolean {
@@ -80,7 +92,7 @@ export class Route {
 
 	private getPattern(path: string): RegExp {
 		const pattern = path.replace(/{:[a-zA-Z]*}/g, "([^\/])+")
-		return new RegExp(pattern, "g")
+		return new RegExp(pattern)
 	} 
 }
 
